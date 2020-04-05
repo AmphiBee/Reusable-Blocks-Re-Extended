@@ -18,6 +18,7 @@ add_action( 'init', 'reblex_init_plugin', 20 );
  */
 function reblex_init_plugin() {
 	if ( ! function_exists( 'reblex_reusable_menu_display' ) ) {
+        add_action('admin_notices', 'reblex_admin_notice');
 		return;
 	}
 	add_action( 'save_post', 'reblex_pattern_save_meta' );
@@ -25,6 +26,12 @@ function reblex_init_plugin() {
 }
 
 add_action( 'admin_enqueue_scripts', 'reblex_enqueue_assets' );
+
+function reblex_admin_notice() {
+    echo '<div class="notice notice-warning is-dismissible">
+         <p>' . __('You need to install and activate the awesome <a target="_blank" href="https://wordpress.org/plugins/reusable-blocks-extended/">Reusable Blocks Extended</a> in order to use Reusable Blocks Re-Extended', 'reusable-blocks-reextended') . '</p>
+     </div>';
+}
 
 /**
  * Enqueue assets
