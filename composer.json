@@ -1,0 +1,23 @@
+{
+  "name": "amphibee/reusable-blocks-patterns",
+  "description": "Extends JB Audras Gutenberg Reusable Blocks plugin feature adding Pattern block management.",
+  "keywords":[
+    "wordpress",
+    "wordpress-plugin",
+    "uploads",
+    "sanitize",
+    "wordpress-mu-plugin",
+    "media"
+  ],
+  "homepage":"https://github.com/AmphiBee/Reusable-Blocks-Re-Extended",
+  "authors": [
+    {
+      "name":"AmphiBee",
+      "email":"hello@amphibee.fr",
+      "homepage":"https://amphibee.fr/"
+    }
+  ],
+  "type":"wordpress-muplugin",
+  "minimum-stability":"stable",
+  "license":"GPL-2.0+"
+}
