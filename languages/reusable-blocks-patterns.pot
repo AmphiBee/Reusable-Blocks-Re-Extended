@@ -1,0 +1,71 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Project-Id-Version: Reusable Blocks Extended - Patterns\n"
+"POT-Creation-Date: 2020-04-06 08:20+0200\n"
+"PO-Revision-Date: 2020-04-06 08:17+0200\n"
+"Last-Translator: Olivier Gorzalka <olivier@behaba.com>\n"
+"Language-Team: Olivier Gorzalka <olivier@behaba.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2.3\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: reusable-blocks-reextended.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.min.js\n"
+
+#: reusable-blocks-reextended.php:42
+msgid ""
+"Patterns are not available in you Gutenberg version. You need to grab the "
+"latest version of <a target=\"_blank\" href=\"https://wordpress.org/plugins/"
+"gutenberg/\">Gutenberg</a>."
+msgstr ""
+
+#: reusable-blocks-reextended.php:45
+msgid ""
+"You need to install and activate the awesome <a target=\"_blank\" href="
+"\"https://wordpress.org/plugins/reusable-blocks-extended/\">Reusable Blocks "
+"Extended</a> in order to use Reusable Blocks Extended - Patterns"
+msgstr ""
+
+#: reusable-blocks-reextended.php:142
+msgid "Pattern block"
+msgstr ""
+
+#: reusable-blocks-reextended.php:170
+msgid "Use as pattern block"
+msgstr ""
+
+#: reusable-blocks-reextended.php:174
+msgid "Pattern block settings"
+msgstr ""
+
+#: reusable-blocks-reextended.php:180
+msgid "Hide block from the Reusable block list"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Reusable Blocks Extended - Patterns"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+#. Author URI of the plugin/theme
+msgid "https://amphibee.fr/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"Extends JB Audras Gutenberg Reusable Blocks plugin feature adding Pattern "
+"block management."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "AmphiBee"
+msgstr ""

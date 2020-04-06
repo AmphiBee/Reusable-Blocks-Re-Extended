@@ -8,7 +8,7 @@
 * Author URI:     https://amphibee.fr/
 * License:        GPL-2.0+
 * License URI:    http://www.gnu.org/licenses/gpl-2.0.txt
-* Text Domain:    reusable-blocks-extended
+* Text Domain:    reusable-blocks-patterns
 */
 
 add_action( 'init', 'reblex_init_plugin', 20 );
@@ -24,6 +24,13 @@ function reblex_init_plugin() {
 	add_action( 'save_post', 'reblex_pattern_save_meta' );
 	add_action( 'add_meta_boxes', 'reblex_register_pattern_meta_box' );
 	add_action( 'admin_enqueue_scripts', 'reblex_enqueue_assets' );
+
+    add_action( 'plugins_loaded', 'reblex_load_plugin_textdomain' );
+}
+
+function reblex_load_plugin_textdomain() {
+    load_plugin_textdomain( 'reusable-blocks-patterns', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+
 }
 
 /**
@@ -34,10 +41,10 @@ function reblex_admin_notice() {
 	$message = array();
 
 	if ( ! reblex_is_patterns_available() ) {
-		$message[] = __( 'Patterns are not available in you Gutenberg version. You need to grab the latest version of <a target="_blank" href="https://wordpress.org/plugins/gutenberg/">Gutenberg</a>.', 'reusable-blocks-reextended' );
+		$message[] = __( 'Patterns are not available in you Gutenberg version. You need to grab the latest version of <a target="_blank" href="https://wordpress.org/plugins/gutenberg/">Gutenberg</a>.', 'reusable-blocks-patterns' );
 	}
 	if ( ! reblex_is_reblex_available() ) {
-		$message[] = __( 'You need to install and activate the awesome <a target="_blank" href="https://wordpress.org/plugins/reusable-blocks-extended/">Reusable Blocks Extended</a> in order to use Reusable Blocks Re-Extended', 'reusable-blocks-reextended' );
+		$message[] = __( 'You need to install and activate the awesome <a target="_blank" href="https://wordpress.org/plugins/reusable-blocks-extended/">Reusable Blocks Extended</a> in order to use Reusable Blocks Extended - Patterns', 'reusable-blocks-patterns' );
 	}
 
 	$message_output  = '<p><strong>Reusable Blocks Extended - Patterns</strong></p>';
@@ -134,7 +141,7 @@ function reblex_register_patterns() {
 function reblex_register_pattern_meta_box() {
 	add_meta_box(
 		'reblex-save-pattern',
-		__( 'Pattern block', 'reusable-blocks-reextended' ),
+		__( 'Pattern block', 'reusable-blocks-patterns' ),
 		'reblex_pattern_manage',
 		'wp_block',
 		'side'
@@ -162,17 +169,17 @@ function reblex_pattern_manage( $post ) {
 		<div class="pattern-enable">
 			<input type="checkbox" id="reblex-pattern" name="_reblex_pattern"  <?php echo $checked; ?>/>
 			<label for="reblex-pattern">
-				<?php _e( 'Use as pattern block', 'reusable-blocks-reextended' ); ?>
+				<?php _e( 'Use as pattern block', 'reusable-blocks-patterns' ); ?>
 			</label>
 			<div class="reblex-pattern-conditional">
 				<div class="reblex-pattern-hide">
-					<strong><?php _e( 'Pattern block settings', 'reusable-blocks-reextended' ); ?></strong></em>
+					<strong><?php _e( 'Pattern block settings', 'reusable-blocks-patterns' ); ?></strong></em>
 				</div>
 				<ul class="post-types">
 					<li>
 						<input type="checkbox" id="reblex-pattern-hide" name="_reblex_pattern-hide-wp_block"  <?php echo $hide_checked; ?>/>
 						<label for="reblex-pattern-hide">
-							<?php _e( 'Hide block from the Reusable block list', 'reusable-blocks-reextended' ); ?>
+							<?php _e( 'Hide block from the Reusable block list', 'reusable-blocks-patterns' ); ?>
 						</label>
 					</li>
 				</ul>
