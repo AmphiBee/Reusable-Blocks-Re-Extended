@@ -1,9 +1,9 @@
 <?php
 /**
-* Plugin Name:    Reusable Blocks Re-Extended
+* Plugin Name:    Reusable Blocks Extended - Patterns
 * Plugin URI:     https://amphibee.fr/
 * Description:    Extends JB Audras Gutenberg Reusable Blocks plugin feature adding Pattern block management.
-* Version:         0.5.1
+* Version:        1.0
 * Author:         AmphiBee
 * Author URI:     https://amphibee.fr/
 * License:        GPL-2.0+
@@ -17,20 +17,76 @@ add_action( 'init', 'reblex_init_plugin', 20 );
  * Init plugin
  */
 function reblex_init_plugin() {
-	if ( ! function_exists( 'reblex_reusable_menu_display' ) ) {
-        add_action('admin_notices', 'reblex_admin_notice');
+	if ( ! reblex_is_reblex_available() || ! reblex_is_patterns_available() ) {
+		add_action( 'admin_notices', 'reblex_admin_notice' );
 		return;
 	}
 	add_action( 'save_post', 'reblex_pattern_save_meta' );
 	add_action( 'add_meta_boxes', 'reblex_register_pattern_meta_box' );
+	add_action( 'admin_enqueue_scripts', 'reblex_enqueue_assets' );
 }
 
-add_action( 'admin_enqueue_scripts', 'reblex_enqueue_assets' );
-
+/**
+ * Admin notice if requirements are not met
+ */
 function reblex_admin_notice() {
-    echo '<div class="notice notice-warning is-dismissible">
-         <p>' . __('You need to install and activate the awesome <a target="_blank" href="https://wordpress.org/plugins/reusable-blocks-extended/">Reusable Blocks Extended</a> in order to use Reusable Blocks Re-Extended', 'reusable-blocks-reextended') . '</p>
-     </div>';
+
+	$message = array();
+
+	if ( ! reblex_is_patterns_available() ) {
+		$message[] = __( 'Patterns are not available in you Gutenberg version. You need to grab the latest version of <a target="_blank" href="https://wordpress.org/plugins/gutenberg/">Gutenberg</a>.', 'reusable-blocks-reextended' );
+	}
+	if ( ! reblex_is_reblex_available() ) {
+		$message[] = __( 'You need to install and activate the awesome <a target="_blank" href="https://wordpress.org/plugins/reusable-blocks-extended/">Reusable Blocks Extended</a> in order to use Reusable Blocks Re-Extended', 'reusable-blocks-reextended' );
+	}
+
+	$message_output  = '<p><strong>Reusable Blocks Extended - Patterns</strong></p>';
+	$message_output .= implode( '<br>', $message );
+
+	echo "<div class=\"notice notice-warning is-dismissible\"><p>{$message_output}</p></div>";
+}
+
+
+/**
+ * Tell if Reusable Blocks Extended is installed
+ */
+function reblex_is_reblex_available() {
+	return function_exists( 'reblex_reusable_menu_display' );
+}
+
+/**
+ * Tell if pattern are available inside Gutenberg
+ */
+function reblex_is_patterns_available() {
+	return function_exists( 'register_pattern' );
+}
+
+add_filter( 'rest_wp_block_query', 'reblex_rest_wp_block_query', 99, 2 );
+
+/**
+ * Filtering the WP Block rest api request
+ * @param $args : rest query arguments
+ * @return mixed
+ */
+function reblex_rest_wp_block_query($args ) {
+
+	if ( $args['post_type'] === 'wp_block' ) {
+
+		// create meta query arg if not set
+		if ( ! isset( $args['meta_query'] ) ) {
+			$args['meta_query'] = array(
+				'relation' => 'AND',
+			);
+		}
+
+		// only blocks not registered as hidden
+		$args['meta_query'][] = array(
+            'key'     => '_reblex_pattern-hide-wp_block',
+            'compare' => 'NOT EXISTS',
+        );
+	}
+
+	return $args;
 }
 
 /**
@@ -47,7 +103,7 @@ add_action( 'init', 'reblex_register_patterns', 30 );
  */
 function reblex_register_patterns() {
 
-    // get all the wp_block with pattern mode
+	// get all the wp_block with pattern mode
 	$args = array(
 		'post_type'  => 'wp_block',
 		'status'     => 'publish',
@@ -89,17 +145,16 @@ function reblex_register_pattern_meta_box() {
  * Pattern meta box
  * @param $post : current edited post
  */
-function reblex_pattern_manage($post ) {
+function reblex_pattern_manage( $post ) {
 	// Add an nonce field so we can check for it later.
 	wp_nonce_field( 'reblex_pattern_save', 'reblex_pattern_nonce' );
 
 	// Use get_post_meta to retrieve an existing value from the database.
 	$value      = get_post_meta( $post->ID, '_reblex_pattern', true );
+	$hide_value = get_post_meta( $post->ID, '_reblex_pattern-hide-wp_block', true );
 
-	$checked = $value ? 'checked="checked"' : '';
-
-	$post_types = get_post_types( array(), 'objects' );
-	$blacklist  = array( 'wp_block', 'attachment', 'nav_menu_item', 'wp_area' );
+	$checked      = $value ? 'checked="checked"' : '';
+	$hide_checked = $hide_value ? 'checked="checked"' : '';
 
 	// Display the form, using the current value.
 	?>
@@ -109,6 +164,19 @@ function reblex_pattern_manage($post ) {
 			<label for="reblex-pattern">
 				<?php _e( 'Use as pattern block', 'reusable-blocks-reextended' ); ?>
 			</label>
+			<div class="reblex-pattern-conditional">
+				<div class="reblex-pattern-hide">
+					<strong><?php _e( 'Pattern block settings', 'reusable-blocks-reextended' ); ?></strong></em>
+				</div>
+				<ul class="post-types">
+					<li>
+						<input type="checkbox" id="reblex-pattern-hide" name="_reblex_pattern-hide-wp_block"  <?php echo $hide_checked; ?>/>
+						<label for="reblex-pattern-hide">
+							<?php _e( 'Hide block from the Reusable block list', 'reusable-blocks-reextended' ); ?>
+						</label>
+					</li>
+				</ul>
+			</div>
 		</div>
 	</div>
 	<?php
@@ -126,25 +194,19 @@ function reblex_pattern_save_meta( $post_id ) {
 	$nonce_name   = isset( $_POST['reblex_pattern_nonce'] ) ? $_POST['reblex_pattern_nonce'] : '';
 	$nonce_action = 'reblex_pattern_save';
 
-	// Check if nonce is valid.
-	if ( ! wp_verify_nonce( $nonce_name, $nonce_action ) ) {
+	// Security check
+	if ( ! wp_verify_nonce( $nonce_name, $nonce_action ) || ! current_user_can( 'edit_post', $post_id ) || wp_is_post_autosave( $post_id ) || wp_is_post_revision( $post_id ) ) {
 		return;
 	}
 
-	// Check if user has permissions to save data.
-	if ( ! current_user_can( 'edit_post', $post_id ) ) {
-		return;
-	}
+	$enable_pattern = $_POST['_reblex_pattern'];
+	$hide_block     = $_POST['_reblex_pattern-hide-wp_block'];
 
-	// Check if not an autosave.
-	if ( wp_is_post_autosave( $post_id ) ) {
-		return;
-	}
+	update_post_meta( $post_id, '_reblex_pattern', $enable_pattern );
 
-	// Check if not a revision.
-	if ( wp_is_post_revision( $post_id ) ) {
-		return;
+	if ( $hide_block ) {
+		update_post_meta( $post_id, '_reblex_pattern-hide-wp_block', $_POST['_reblex_pattern-hide-wp_block'] );
+	} else {
+		delete_post_meta( $post_id, '_reblex_pattern-hide-wp_block' );
 	}
-
-	update_post_meta( $post_id, '_reblex_pattern', $_POST['_reblex_pattern'] );
 }

@@ -1,3 +1,16 @@
 .pattern-enable {
     padding-top: 10px;
 }
+
+.reblex-pattern-conditional {
+    display: none;
+    margin-top: 15px;
+}
+
+#reblex-pattern:checked ~ .reblex-pattern-conditional {
+    display: block;
+}
+
+.reblex-pattern-conditional ul {
+    margin-top: 5px;
+}
