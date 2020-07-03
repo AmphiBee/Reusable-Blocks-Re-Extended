@@ -65,7 +65,7 @@ function reblex_is_reblex_available() {
  * Tell if pattern are available inside Gutenberg
  */
 function reblex_is_patterns_available() {
-	return function_exists( 'register_pattern' );
+	return function_exists( 'register_block_pattern' );
 }
 
 add_filter( 'rest_wp_block_query', 'reblex_rest_wp_block_query', 99, 2 );
@@ -123,7 +123,7 @@ function reblex_register_patterns() {
 	if ( $query->have_posts() ) {
 		foreach ( $query->posts as $pattern ) {
 			$pattern_name = $pattern->post_title . '-' . $pattern->ID;
-			register_pattern(
+			register_block_pattern(
 				"reblex/{$pattern_name}",
 				array(
 					'title'   => $pattern->post_title,
